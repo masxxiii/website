@@ -12,7 +12,7 @@ export default defineConfig({
     trailingSlash: 'ignore',
 
     build: {
-        format: 'directory'
+        format: 'directory',
     },
 
     integrations: [react(), sitemap()],
