@@ -49,3 +49,4 @@ Thumbs.db
 
 # Firebase
 firebase_credentials.json
+.firebase
