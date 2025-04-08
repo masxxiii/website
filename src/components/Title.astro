@@ -1,0 +1,36 @@
+---
+// Title.astro
+const { title, subtitle } = Astro.props;
+---
+
+<style>
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(-3rem);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+</style>
+
+<div class="mt-0 sm:mt-0 md:mt-5 lg:mt-10 xl:mt-20">
+    <div
+        class="w-full max-w-6xl mx-auto px-4 py-12 flex justify-center items-center text-center font-bold font-[DynaPuff] opacity-0 translate-y-4 animate-fade-in-up"
+    >
+        <span class="text-[clamp(2rem,10vw,20rem)] leading-none">
+            {title}
+        </span>
+    </div>
+</div>
+<div
+    class="mt-4 text-center mx-auto px-4 sm:px-6 text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-light leading-tight tracking-tight max-w-3xl"
+>
+    <span>{subtitle}</span>
+</div>

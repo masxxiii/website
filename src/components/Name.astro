@@ -1,0 +1,228 @@
+---
+// Name.astro
+---
+
+<style>
+    .eye {
+        position: relative;
+        display: inline-block;
+        width: 0.8em;
+        height: 0.8em;
+        background: white;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 0 0.03em;
+        box-shadow: 0 0 0.1em #213555;
+        vertical-align: middle;
+    }
+
+    :global(.dark) .eye {
+        background: #f5efe7;
+        box-shadow: 0 0 0.07em #f5efe7;
+    }
+
+    .pupil {
+        width: 0.3em;
+        height: 0.3em;
+        background: #213555;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        transition: transform 0.05s linear;
+        z-index: 1;
+    }
+
+    .eyelid {
+        position: absolute;
+        width: 100%;
+        height: 50%;
+        background: #213555;
+        transition: transform 0.2s ease-in-out;
+        z-index: 2;
+        pointer-events: none;
+        border-radius: 0;
+    }
+
+    .top-lid {
+        top: 0;
+        transform: translateY(-100%);
+    }
+
+    .bottom-lid {
+        bottom: 0;
+        transform: translateY(100%);
+    }
+
+    .eye.blinking .top-lid,
+    .eye.winking .top-lid {
+        transform: translateY(0%);
+    }
+
+    .eye.blinking .bottom-lid,
+    .eye.winking .bottom-lid {
+        transform: translateY(0%);
+    }
+
+    @keyframes fade-in-up {
+        from {
+            opacity: 0;
+            transform: translateY(-3rem);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in-up {
+        animation: fade-in-up 0.8s ease-out forwards;
+    }
+
+    #typewriter::after {
+        content: '|';
+        animation: blink 1s infinite;
+        margin-left: 4px;
+    }
+
+    @keyframes blink {
+        0%,
+        100% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+        }
+    }
+</style>
+
+<div
+    class="w-full max-w-6xl mx-auto px-4 py-12 flex justify-center items-center text-center font-bold font-[DynaPuff] opacity-0 translate-y-4 animate-fade-in-up"
+>
+    <span class="inline-flex items-center gap-2 text-[clamp(2rem,10vw,20rem)] leading-none">
+        I'M&nbsp;MAS
+        <span class="eye">
+            <div class="eyelid top-lid"></div>
+            <div class="eyelid bottom-lid"></div>
+            <div class="pupil"></div>
+        </span>
+        <span class="eye">
+            <div class="eyelid top-lid"></div>
+            <div class="eyelid bottom-lid"></div>
+            <div class="pupil"></div>
+        </span>
+        D.
+    </span>
+</div>
+<div
+    id="subtitle"
+    class="mt-1 sm:mt-4 md:mt-4 lg:mt-6 xl:mt-10 text-center mx-auto text-lg sm:text-xl md:text-2xl lg:text-4xl xl:text-5xl font-bold opacity-0"
+>
+    <span id="typewriter"></span>
+</div>
+
+<script>
+    const eyes = document.querySelectorAll('.eye');
+    const pupils = document.querySelectorAll('.pupil');
+
+    const startBlinking = (eye: Element) => {
+        let blinking = true;
+
+        const blinkLoop = () => {
+            if (!blinking) return;
+
+            eye.classList.add('blinking');
+
+            setTimeout(() => {
+                if (blinking) {
+                    eye.classList.remove('blinking');
+                }
+            }, 300); // eyelids closed time
+        };
+
+        const initialDelay = Math.random() * 10;
+        const interval = setInterval(blinkLoop, 5000);
+        setTimeout(blinkLoop, initialDelay);
+
+        return {
+            pause: () => {
+                blinking = false;
+                eye.classList.add('winking'); // hold closed
+            },
+            resume: () => {
+                blinking = true;
+                eye.classList.remove('winking');
+            },
+            stop: () => clearInterval(interval),
+        };
+    };
+
+    // Track blink control for each eye
+    const eyeControllers: { pause: () => void; resume: () => void; stop: () => void }[] = [];
+
+    eyes.forEach((eye) => {
+        const controller = startBlinking(eye);
+        eyeControllers.push(controller);
+
+        eye.addEventListener('mouseenter', () => {
+            eye.classList.add('winking');
+            controller.pause();
+        });
+
+        eye.addEventListener('mouseleave', () => {
+            eye.classList.remove('winking');
+            controller.resume();
+        });
+    });
+
+    // Eye tracking
+    document.addEventListener('mousemove', (e) => {
+        pupils.forEach((pupil) => {
+            const pupilEl = pupil as HTMLElement;
+            const eye = pupil.parentElement!.getBoundingClientRect();
+            const eyeCenterX = eye.left + eye.width / 2;
+            const eyeCenterY = eye.top + eye.height / 2;
+            const angle = Math.atan2(e.pageY - eyeCenterY, e.pageX - eyeCenterX);
+
+            const radius = eye.width * 0.2;
+            const x = Math.cos(angle) * radius;
+            const y = Math.sin(angle) * radius;
+
+            pupilEl.style.transform = `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`;
+        });
+    });
+
+    document.addEventListener('mouseleave', () => {
+        pupils.forEach((pupil) => {
+            const pupilEl = pupil as HTMLElement;
+            pupilEl.style.transform = 'translate(-50%, -50%)';
+        });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const subtitle = document.getElementById('subtitle');
+        const typewriter = document.getElementById('typewriter');
+
+        if (!subtitle || !typewriter) return;
+
+        const text = 'A backend engineer.';
+        const delayBetweenChars = 80;
+        const titleAnimationDelay = 900;
+
+        setTimeout(() => {
+            subtitle.classList.remove('opacity-0');
+
+            let i = 0;
+            const typeNextChar = () => {
+                if (i < text.length) {
+                    typewriter.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(typeNextChar, delayBetweenChars);
+                }
+            };
+
+            typeNextChar();
+        }, titleAnimationDelay);
+    });
+</script>

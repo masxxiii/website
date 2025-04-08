@@ -1,0 +1,24 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Palette #213555 #3E5879 #D8C4B6 #F5EFE7 */
+
+@layer base {
+    html {
+        font-family: 'Comfortaa', sans-serif;
+    }
+
+    body {
+        background-color: #f5efe7;
+        color: #213555;
+        transition:
+            background-color 1s ease,
+            color 0.5s ease;
+    }
+
+    .dark body {
+        background-color: #213555;
+        color: #f5efe7;
+    }
+}

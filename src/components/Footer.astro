@@ -1,0 +1,49 @@
+---
+// Footer.astro
+import SunIcon from '../assets/svgs/sun.svg';
+import MoonIcon from '../assets/svgs/moon.svg';
+---
+
+<footer class="text-sm px-4 py-8">
+    <div class="mt-20 sm:mt-25 md:mt-35 lg:mt-45 xl:mt-55">
+        <div class="max-w-7xl mx-auto flex flex-col items-center space-y-4 text-center">
+            <nav class="flex flex-wrap justify-center gap-6 text-base font-light">
+                <a
+                    href="https://www.instagram.com/masxxiii"
+                    target="_blank"
+                    class="hover:text-[#D8C4B6] dark:hover:text-[#3E5879] transition">Instagram</a
+                >
+                <a
+                    href="https://t.me/masxxiii"
+                    target="_blank"
+                    class="hover:text-[#D8C4B6] dark:hover:text-[#3E5879] transition">Telegram</a
+                >
+                <a
+                    href="https://github.com/masxxiii"
+                    target="_blank"
+                    class="hover:text-[#D8C4B6] dark:hover:text-[#3E5879] transition">GitHub</a
+                >
+            </nav>
+            <button
+                    id="theme-toggle"
+                    class="p-2 hover:text-[#D8C4B6] dark:hover:text-[#3E5879] transition"
+                    aria-label="Toggle Theme"
+            >
+                <MoonIcon class="w-7 h-7 hidden dark:block" />
+                <SunIcon class="w-7 h-7 dark:hidden" />
+            </button>
+
+            <p class="text-xs font-extralight">© 2025 Masood</p>
+            <p class="text-xs font-extralight">Crafted with ☕ and care</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    const toggleBtn = document.getElementById('theme-toggle');
+    toggleBtn?.addEventListener('click', () => {
+        const html = document.documentElement;
+        const isDark = html.classList.toggle('dark');
+        localStorage.theme = isDark ? 'dark' : 'light';
+    });
+</script>
