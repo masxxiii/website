@@ -9,7 +9,11 @@ export default defineConfig({
 
     output: 'static',
 
-    trailingSlash: 'never',
+    trailingSlash: 'ignore',
+
+    build: {
+        format: 'directory'
+    },
 
     integrations: [react(), sitemap()],
 
