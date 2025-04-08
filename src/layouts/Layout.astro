@@ -8,12 +8,16 @@ import Footer from '../components/Footer.astro';
 <html lang="en" class="scroll-smooth">
     <head>
         <script>
-            document.documentElement.classList.toggle(
-                'dark',
-                localStorage.theme === 'dark' ||
-                    (!('theme' in localStorage) &&
-                        window.matchMedia('(prefers-color-scheme: dark)').matches)
-            );
+            const storedTheme = localStorage.getItem('theme');
+
+            if (!storedTheme) {
+                const hour = new Date().getHours();
+                const isDayTime = hour >= 7 && hour < 18;
+
+                document.documentElement.classList.toggle('dark', !isDayTime);
+            } else {
+                document.documentElement.classList.toggle('dark', storedTheme === 'dark');
+            }
         </script>
 
         <meta charset="UTF-8" />

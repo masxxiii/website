@@ -1,5 +1,6 @@
 ---
 // Header.astro
+const currentPath = Astro.url.pathname;
 ---
 
 <header class="sticky top-0 z-50">
@@ -9,19 +10,34 @@
         >
             <a
                 href="/"
-                class="px-4 py-2 rounded-full hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879] transition"
-                >About</a
+                class={`px-4 py-2 rounded-full transition ${
+                    currentPath === '/'
+                        ? 'bg-[#D8C4B6] dark:bg-[#3E5879]'
+                        : 'hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879]'
+                }`}
             >
+                About
+            </a>
             <a
                 href="/work"
-                class="px-4 py-2 rounded-full hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879] transition"
-                >Work</a
+                class={`px-4 py-2 rounded-full transition ${
+                    currentPath === '/work'
+                        ? 'bg-[#D8C4B6] dark:bg-[#3E5879]'
+                        : 'hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879]'
+                }`}
             >
+                Work
+            </a>
             <a
                 href="/notes"
-                class="px-4 py-2 rounded-full hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879] transition"
-                >Notes</a
+                class={`px-4 py-2 rounded-full transition ${
+                    currentPath === '/notes'
+                        ? 'bg-[#D8C4B6] dark:bg-[#3E5879]'
+                        : 'hover:bg-[#D8C4B6] dark:hover:bg-[#3E5879]'
+                }`}
             >
+                Notes
+            </a>
         </nav>
     </div>
 </header>

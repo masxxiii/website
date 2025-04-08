@@ -13,4 +13,8 @@ export default defineConfig({
     experimental: {
         svg: true,
     },
+
+    output: 'static',
+
+    trailingSlash: 'never',
 });
