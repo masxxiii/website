@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Title from '../components/Title.astro';
+import HomeIcon from '../assets/svgs/home.svg';
+---
+
+<Layout>
+    <Title
+        title="Whoops"
+        subtitle="Lost in the digital woods? Not to worry - even the best explorers need directions sometimes."
+    />
+
+    <div class="text-center mt-8">
+        <a href="/">
+            <button class="p-2 hover:text-[#D8C4B6] dark:hover:text-[#3E5879] transition">
+                <HomeIcon class="w-10 h-10 md:w-15 md:h-15" />
+            </button>
+        </a>
+    </div>
+</Layout>

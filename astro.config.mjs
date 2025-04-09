@@ -9,7 +9,7 @@ export default defineConfig({
 
     output: 'static',
 
-    trailingSlash: 'ignore',
+    trailingSlash: 'never',
 
     build: {
         format: 'directory',
