@@ -1,8 +1,252 @@
 ---
+// src/pages/notes.astro
 import Layout from '../layouts/Layout.astro';
 import Title from '../components/Title.astro';
+import NoteCard from '../components/NoteCard.astro';
+import { getCollection } from 'astro:content';
+import type { CollectionEntry } from 'astro:content';
+
+type Note = CollectionEntry<'notes'>;
+
+// Get all notes with error handling
+let allNotes: Note[] = [];
+try {
+    allNotes = await getCollection('notes');
+} catch (error) {
+    console.error('Error loading notes collection:', error);
+}
+
+// Sort notes by date (newest first)
+const sortedNotes = [...allNotes].sort((a, b) => {
+    const dateA = a.data.date ? new Date(a.data.date).getTime() : 0;
+    const dateB = b.data.date ? new Date(b.data.date).getTime() : 0;
+    return dateB - dateA;
+});
+
+// Extract all unique tags for filtering
+const allTags: string[] = [...new Set(allNotes.flatMap((note) => note.data.tags || []))].sort();
+
+// Try to get the selected tag from URL
+const serverSelectedTag = Astro.url.searchParams.get('tag') || '';
+
+// Logging for debugging
+console.log('Server-side URL:', Astro.url.toString());
+console.log('Server-side selected tag:', serverSelectedTag);
+
+// Display all notes initially, client-side JS will handle filtering
+const initialNotes = sortedNotes;
 ---
 
 <Layout>
-    <Title title="Notes" subtitle="Thoughts & scribbles on building systems and writing code." />
+    <Title
+        title="Notes"
+        subtitle="Thoughts & scribbles on building systems, writing code & the journey of living"
+    />
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <!-- Tag filter -->
+        <div class="mb-10 bg-[#f8f5f2] dark:bg-[#2E466B] rounded-xl p-6 shadow-sm">
+            <div class="flex flex-wrap gap-3" id="tag-filters">
+                <a
+                    href="/notes"
+                    class="tag-filter-item px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/80 dark:bg-[#213555]/80 text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/50 dark:hover:bg-[#3E5879]/50"
+                    data-tag=""
+                >
+                    All notes
+                </a>
+
+                {
+                    allTags.map((tag) => (
+                        <a
+                            href={`/notes?tag=${encodeURIComponent(tag)}`}
+                            class="tag-filter-item px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/80 dark:bg-[#213555]/80 text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/50 dark:hover:bg-[#3E5879]/50"
+                            data-tag={tag}
+                        >
+                            {tag}
+                        </a>
+                    ))
+                }
+            </div>
+        </div>
+
+        <!-- Notes count (will be updated by JS) -->
+        <div class="mb-6 text-sm text-[#213555]/70 dark:text-[#f5efe7]/70" id="note-count">
+            {
+                allNotes.length > 0 ? (
+                    <p>
+                        Showing all {initialNotes.length}{' '}
+                        {initialNotes.length === 1 ? 'note' : 'notes'}
+                    </p>
+                ) : (
+                    <p>No notes available yet.</p>
+                )
+            }
+        </div>
+
+        <!-- Notes grid -->
+        {
+            initialNotes.length > 0 ? (
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12" id="notes-grid">
+                    {initialNotes.map((note) => (
+                        <div class="note-card" data-tags={note.data.tags?.join(',') || ''}>
+                            <NoteCard note={note} />
+                        </div>
+                    ))}
+                </div>
+            ) : (
+                <div class="py-12 text-center" id="no-notes">
+                    <div class="text-[#213555]/50 dark:text-[#f5efe7]/50 mb-4">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="h-16 w-16 mx-auto"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="1.5"
+                                d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
+                            />
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-medium text-[#213555] dark:text-[#f5efe7]">
+                        No notes available yet
+                    </h3>
+                    <p class="mt-2 text-[#213555]/70 dark:text-[#f5efe7]/70">
+                        Start creating notes to see them here.
+                    </p>
+                </div>
+            )
+        }
+
+        <!-- Empty state for filtered results (hidden by default) -->
+        <div class="py-12 text-center hidden" id="empty-state">
+            <div class="text-[#213555]/50 dark:text-[#f5efe7]/50 mb-4">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-16 w-16 mx-auto"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="1.5"
+                        d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+                    ></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-medium text-[#213555] dark:text-[#f5efe7]">
+                No matching notes found
+            </h3>
+            <p class="mt-2 text-[#213555]/70 dark:text-[#f5efe7]/70">
+                No notes with the selected tag were found.
+            </p>
+            <a
+                href="/notes"
+                class="mt-6 inline-flex items-center px-4 py-2 border border-[#D8C4B6]/30 dark:border-[#3E5879]/50 rounded-md text-sm text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/10 dark:hover:bg-[#3E5879]/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#D8C4B6] dark:focus:ring-[#3E5879]"
+            >
+                Show all notes
+            </a>
+        </div>
+    </div>
 </Layout>
+
+<script>
+    // This function is responsible for filtering notes based on the URL tag parameter
+    function updateNotesDisplay() {
+        try {
+            // Get the current tag from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const selectedTag = urlParams.get('tag') || '';
+
+            console.log('Client-side detected tag:', selectedTag);
+
+            // Update tag highlighting
+            const tagFilters = document.querySelectorAll('.tag-filter-item');
+            tagFilters.forEach((filter) => {
+                if (filter) {
+                    const filterTag = filter.getAttribute('data-tag') || '';
+
+                    if (filterTag === selectedTag) {
+                        // Selected tag styling
+                        filter.classList.remove('bg-white/80', 'dark:bg-[#213555]/80');
+                        filter.classList.add(
+                            'bg-[#D8C4B6]',
+                            'dark:bg-[#3E5879]',
+                            'text-[#213555]',
+                            'dark:text-[#f5efe7]'
+                        );
+                    } else {
+                        // Non-selected tag styling
+                        filter.classList.remove('bg-[#D8C4B6]', 'dark:bg-[#3E5879]');
+                        filter.classList.add('bg-white/80', 'dark:bg-[#213555]/80');
+                    }
+                }
+            });
+
+            // Get relevant elements
+            const notesGrid = document.getElementById('notes-grid');
+            const noNotes = document.getElementById('no-notes');
+            const emptyState = document.getElementById('empty-state');
+            const noteCountElement = document.getElementById('note-count');
+
+            // If there are no notes at all, don't proceed with filtering
+            if (!notesGrid || noNotes?.classList.contains('hidden') === false) {
+                return;
+            }
+
+            // Filter note cards
+            const noteCards = document.querySelectorAll('.note-card');
+            let visibleCount = 0;
+
+            noteCards.forEach((card) => {
+                if (card) {
+                    const cardTags = (card.getAttribute('data-tags') || '')
+                        .split(',')
+                        .filter(Boolean);
+
+                    if (!selectedTag || cardTags.includes(selectedTag)) {
+                        card.classList.remove('hidden');
+                        visibleCount++;
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                }
+            });
+
+            // Update UI based on visible notes count
+            if (noteCountElement && emptyState) {
+                if (visibleCount === 0) {
+                    noteCountElement.classList.add('hidden');
+                    if (notesGrid) notesGrid.classList.add('hidden');
+                    emptyState.classList.remove('hidden');
+                } else {
+                    noteCountElement.classList.remove('hidden');
+                    if (notesGrid) notesGrid.classList.remove('hidden');
+                    emptyState.classList.add('hidden');
+
+                    if (selectedTag) {
+                        noteCountElement.innerHTML = `<p>Showing ${visibleCount} ${visibleCount === 1 ? 'note' : 'notes'} tagged with "${selectedTag}"</p>`;
+                    } else {
+                        noteCountElement.innerHTML = `<p>Showing all ${visibleCount} ${visibleCount === 1 ? 'note' : 'notes'}</p>`;
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error in updateNotesDisplay:', error);
+        }
+    }
+
+    // Run on initial load
+    document.addEventListener('DOMContentLoaded', updateNotesDisplay);
+
+    // Also run when Astro's view transitions complete
+    document.addEventListener('astro:page-load', updateNotesDisplay);
+
+    // Run when URL changes without a full page load
+    window.addEventListener('popstate', updateNotesDisplay);
+</script>

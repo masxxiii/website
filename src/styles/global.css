@@ -21,4 +21,35 @@
         background-color: #213555;
         color: #f5efe7;
     }
+
+    /* Styling for code blocks, blockquotes, and other markdown elements */
+    .prose pre {
+        background-color: #1e293b;
+        color: #f8fafc;
+        padding: 1.25rem;
+        border-radius: 0.5rem;
+        overflow-x: auto;
+    }
+
+    .prose code {
+        color: #ef4444;
+        background-color: rgba(239, 68, 68, 0.1);
+        padding: 0.2em 0.4em;
+        border-radius: 0.25rem;
+    }
+
+    .prose pre code {
+        color: inherit;
+        background-color: transparent;
+        padding: 0;
+    }
+
+    .prose blockquote {
+        border-left-color: #d8c4b6;
+        font-style: italic;
+    }
+
+    .dark .prose blockquote {
+        border-left-color: #3e5879;
+    }
 }
