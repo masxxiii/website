@@ -26,13 +26,6 @@ const sortedNotes = [...allNotes].sort((a, b) => {
 // Extract all unique tags for filtering
 const allTags: string[] = [...new Set(allNotes.flatMap((note) => note.data.tags || []))].sort();
 
-// Try to get the selected tag from URL
-const serverSelectedTag = Astro.url.searchParams.get('tag') || '';
-
-// Logging for debugging
-console.log('Server-side URL:', Astro.url.toString());
-console.log('Server-side selected tag:', serverSelectedTag);
-
 // Display all notes initially, client-side JS will handle filtering
 const initialNotes = sortedNotes;
 ---
@@ -47,23 +40,21 @@ const initialNotes = sortedNotes;
         <!-- Tag filter -->
         <div class="mb-10 bg-[#f8f5f2] dark:bg-[#2E466B] rounded-xl p-6 shadow-sm">
             <div class="flex flex-wrap gap-3" id="tag-filters">
-                <a
-                    href="/notes"
+                <button
                     class="tag-filter-item px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/80 dark:bg-[#213555]/80 text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/50 dark:hover:bg-[#3E5879]/50"
                     data-tag=""
                 >
                     All notes
-                </a>
+                </button>
 
                 {
                     allTags.map((tag) => (
-                        <a
-                            href={`/notes?tag=${encodeURIComponent(tag)}`}
+                        <button
                             class="tag-filter-item px-4 py-2 rounded-lg text-sm font-medium transition-colors bg-white/80 dark:bg-[#213555]/80 text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/50 dark:hover:bg-[#3E5879]/50"
                             data-tag={tag}
                         >
                             {tag}
-                        </a>
+                        </button>
                     ))
                 }
             </div>
@@ -163,8 +154,6 @@ const initialNotes = sortedNotes;
             const urlParams = new URLSearchParams(window.location.search);
             const selectedTag = urlParams.get('tag') || '';
 
-            console.log('Client-side detected tag:', selectedTag);
-
             // Update tag highlighting
             const tagFilters = document.querySelectorAll('.tag-filter-item');
             tagFilters.forEach((filter) => {
@@ -241,11 +230,42 @@ const initialNotes = sortedNotes;
         }
     }
 
+    // Add click event handlers for filter buttons
+    function setupTagFilters() {
+        const tagFilters = document.querySelectorAll('.tag-filter-item');
+        tagFilters.forEach((filter) => {
+            filter.addEventListener('click', () => {
+                const tag = filter.getAttribute('data-tag');
+
+                // Create a new URL object from the current location
+                const url = new URL(window.location.href);
+
+                if (tag) {
+                    url.searchParams.set('tag', tag);
+                } else {
+                    url.searchParams.delete('tag');
+                }
+
+                // Update URL without triggering a page navigation
+                window.history.pushState({}, '', url);
+
+                // Update display based on the new tag
+                updateNotesDisplay();
+            });
+        });
+    }
+
     // Run on initial load
-    document.addEventListener('DOMContentLoaded', updateNotesDisplay);
+    document.addEventListener('DOMContentLoaded', () => {
+        updateNotesDisplay();
+        setupTagFilters();
+    });
 
     // Also run when Astro's view transitions complete
-    document.addEventListener('astro:page-load', updateNotesDisplay);
+    document.addEventListener('astro:page-load', () => {
+        updateNotesDisplay();
+        setupTagFilters();
+    });
 
     // Run when URL changes without a full page load
     window.addEventListener('popstate', updateNotesDisplay);
