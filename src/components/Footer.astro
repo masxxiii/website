@@ -49,11 +49,9 @@ import MoonIcon from '../assets/svgs/moon.svg';
 
     setInterval(
         () => {
-            if (!localStorage.theme) {
-                const hour = new Date().getHours();
-                const isDayTime = hour >= 7 && hour < 18;
-                document.documentElement.classList.toggle('dark', !isDayTime);
-            }
+            const hour = new Date().getHours();
+            const isDayTime = hour >= 7 && hour < 18;
+            document.documentElement.classList.toggle('dark', !isDayTime);
         },
         60 * 60 * 1000
     );
