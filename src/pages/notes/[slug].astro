@@ -2,11 +2,12 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import type { CollectionEntry } from 'astro:content';
+import type { NoteType } from '../../interfaces/notes';
 
 // Generate all note paths
 export async function getStaticPaths() {
     const notes = await getCollection('notes');
-    return notes.map((note) => ({
+    return notes.map((note: NoteType) => ({
         params: { slug: note.slug },
         props: { note },
     }));
@@ -24,9 +25,9 @@ const { Content } = await note.render();
 // Get related notes (up to 3 that share tags with current note)
 const allNotes = await getCollection('notes');
 const relatedNotes = allNotes
-    .filter((n) => n.slug !== note.slug)
-    .filter((n) => n.data.tags.some((tag) => note.data.tags.includes(tag)))
-    .sort((a, b) => {
+    .filter((n: NoteType) => n.slug !== note.slug)
+    .filter((n: NoteType) => n.data.tags.some((tag) => note.data.tags.includes(tag)))
+    .sort((a: NoteType, b: NoteType) => {
         // Sort by number of matching tags (descending)
         const aCommonTags = a.data.tags.filter((tag) => note.data.tags.includes(tag)).length;
         const bCommonTags = b.data.tags.filter((tag) => note.data.tags.includes(tag)).length;
@@ -79,7 +80,7 @@ function formatDate(dateString: string) {
 
                     <div class="flex flex-wrap gap-2 mb-8">
                         {
-                            note.data.tags.map((tag) => (
+                            note.data.tags.map((tag: string) => (
                                 <a
                                     href={`/notes?tag=${encodeURIComponent(tag)}`}
                                     class="inline-block px-3 py-1 text-sm rounded-full bg-[#D8C4B6]/30 dark:bg-[#3E5879] text-[#213555] dark:text-[#f5efe7] hover:bg-[#D8C4B6]/50 dark:hover:bg-[#3E5879]/70 transition-colors"
@@ -106,7 +107,7 @@ function formatDate(dateString: string) {
                         Related Notes
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        {relatedNotes.map((relatedNote) => (
+                        {relatedNotes.map((relatedNote: NoteType) => (
                             <a
                                 href={`/notes/${relatedNote.slug}`}
                                 class="block bg-white dark:bg-[#2E466B] rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden hover:-translate-y-1 p-5"
@@ -119,9 +120,9 @@ function formatDate(dateString: string) {
                                 </p>
                                 <div class="flex flex-wrap gap-1">
                                     {relatedNote.data.tags
-                                        .filter((tag) => note.data.tags.includes(tag))
+                                        .filter((tag: string) => note.data.tags.includes(tag))
                                         .slice(0, 3)
-                                        .map((tag) => (
+                                        .map((tag: string) => (
                                             <span class="inline-block px-2 py-0.5 text-xs rounded-full bg-[#D8C4B6]/20 dark:bg-[#3E5879]/70 text-[#213555] dark:text-[#f5efe7]">
                                                 {tag}
                                             </span>

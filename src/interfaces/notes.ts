@@ -1,4 +1,4 @@
-export interface Note {
+export interface NoteType {
     slug: string;
     data: {
         title: string;
@@ -16,12 +16,3 @@ export interface Note {
 }
 
 export type SortDirection = 'asc' | 'desc';
-
-export interface NoteFilterOptions {
-    query?: string;
-    tag?: string;
-    page?: number;
-    limit?: number;
-    sortBy?: keyof Note['data'];
-    sortDirection?: SortDirection;
-}
