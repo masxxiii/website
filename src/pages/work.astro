@@ -1,13 +1,23 @@
 ---
+import { Image } from 'astro:assets';
 import Layout from '../layouts/Layout.astro';
 import Title from '../components/Title.astro';
+
+import dyorThumbnail from '../assets/images/projects/dyor_thumbnail.png';
+import dyorShowcase from '../assets/images/projects/dyor_showcase.png';
+import ridoThumbnail from '../assets/images/projects/rido_thumbnail.png';
+import nfaThumbnail from '../assets/images/projects/nfa_thumbnail.png';
+import fomoThumbnail from '../assets/images/projects/fomo_thumbnail.png';
+import pmktThumbnail from '../assets/images/projects/pmkt_thumbnail.png';
+import lpayThumbnail from '../assets/images/projects/lpay_thumbnail.png';
+import uworkThumbnail from '../assets/images/projects/uwork_thumbnail.png';
 
 const featuredProject = {
     title: 'Dyor',
     description: 'AI-powered decentralized investing app with social features.',
     technologies: ['TypeScript', 'Go', 'Node.js', 'NestJS', 'React Native', 'AWS'],
-    thumbnailImage: '/src/assets/images/projects/dyor_thumbnail.png',
-    showcaseImage: '/src/assets/images/projects/dyor_showcase.png',
+    thumbnailImage: dyorThumbnail,
+    showcaseImage: dyorShowcase,
     link: 'https://dyor.exchange',
 };
 
@@ -17,7 +27,7 @@ const projects = [
         title: 'RIDO',
         description: 'Gamified cycling app built on web3.',
         technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'AWS'],
-        image: '/src/assets/images/projects/rido_thumbnail.png',
+        image: ridoThumbnail,
         link: 'https://rido.app',
     },
     {
@@ -25,7 +35,7 @@ const projects = [
         title: 'NFA',
         description: 'Crypto Gateway to Community Quests.',
         technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'Telegram', 'DigitalOcean'],
-        image: '/src/assets/images/projects/nfa_thumbnail.png',
+        image: nfaThumbnail,
         link: 'https://masoodbuilds.com/nfa',
     },
     {
@@ -33,7 +43,7 @@ const projects = [
         title: 'FOMO',
         description: 'Meme token trading powered by AI signals.',
         technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'Telegram', 'Google Cloud'],
-        image: '/src/assets/images/projects/fomo_thumbnail.png',
+        image: fomoThumbnail,
         link: 'https://apeinfomo.app',
     },
     {
@@ -41,7 +51,7 @@ const projects = [
         title: 'Peer Market',
         description: 'P2P platform built on tron.',
         technologies: ['TypeScript', 'TRON', 'PostgreSQL', 'Telegram', 'AWS'],
-        image: '/src/assets/images/projects/pmkt_thumbnail.png',
+        image: pmktThumbnail,
         link: 'https://masoodbuilds.com/pmkt',
     },
     {
@@ -49,7 +59,7 @@ const projects = [
         title: 'L Pay',
         description: 'Next generation crypto payment system using non-custodial smart contracts.',
         technologies: ['TypeScript', 'Go', 'Base', 'PostgreSQL', 'AWS'],
-        image: '/src/assets/images/projects/lpay_thumbnail.png',
+        image: lpayThumbnail,
         link: 'https://masoodbuilds.com/lpay',
     },
     {
@@ -58,7 +68,7 @@ const projects = [
         description:
             'On-demand skilled trades marketplace connecting homeowners with verified professionals.',
         technologies: ['TypeScript', 'Node.js', 'PostgreSQL', 'AWS'],
-        image: '/src/assets/images/projects/uwork_thumbnail.png',
+        image: uworkThumbnail,
         link: 'https://masoodbuilds.com/uwork',
     },
 ];
@@ -87,7 +97,7 @@ const projects = [
                             >
                                 {
                                     featuredProject.thumbnailImage ? (
-                                        <img
+                                        <Image
                                             src={featuredProject.thumbnailImage}
                                             alt={`${featuredProject.title} thumbnail`}
                                             class="w-full h-full object-cover"
@@ -147,7 +157,7 @@ const projects = [
                         >
                             {
                                 featuredProject.showcaseImage ? (
-                                    <img
+                                    <Image
                                         src={featuredProject.showcaseImage}
                                         alt={`${featuredProject.title} showcase`}
                                         class="w-full h-full object-cover"
@@ -177,7 +187,7 @@ const projects = [
                             <div class="flex flex-row items-start gap-4">
                                 <div class="w-20 h-20 min-w-[5rem] rounded-md overflow-hidden flex-shrink-0 bg-[#D8C4B6]/20 dark:bg-[#3E5879]/30">
                                     {project.image ? (
-                                        <img
+                                        <Image
                                             src={project.image}
                                             alt={`${project.title} thumbnail`}
                                             class="w-full h-full object-cover"
